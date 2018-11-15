@@ -11,7 +11,8 @@
 				<div class="col-sm">
 					<label for="cliente" class="d-block">Cliente</label>
 					<div class="input-group">
-						<input type="text" class="form-control typeahead cliente" id="cliente" name="cliente" placeholder="Busque por nombre o correo electrónico">
+						<input type="hidden" name="cliente_id" id="cliente_id">
+						<input type="text" class="form-control typeahead cliente" id="cliente" name="cliente" placeholder="Busque por nombre o número de documento">
 						<div class="input-group-append">
 							<button data-toggle="modal" data-target="#formCliente" class="btn btn-secondary btn-sm" type="button"><i class="fas fa-user-plus"></i></button>
 						</div>
@@ -155,4 +156,32 @@
 		</div>
 	</div>
 </div>
+@endsection
+@section('scripts')
+<script>
+	var clientes = {!! $clientes !!};
+	var substringMatcher = function(strs) {
+		return function findMatches(q, cb) {
+			var matches, substringRegex;
+			matches = [];
+			substrRegex = new RegExp(q, 'i');
+			$.each(strs, function(i, str) {
+				if (substrRegex.test(str.documento) || substrRegex.test(str.nombres) || substrRegex.test(str.apellidos)) {
+					matches.push(str.documento + ' | ' + str.nombres + ' ' + str.apellidos);
+					$('#cliente_id').val(str.id)
+				}
+			});
+			cb(matches);
+		};
+	};
+	$('.typeahead.cliente').typeahead({
+		hint: false,
+		highlight: true,
+		minLength: 3
+	},
+	{
+		name: 'clientes',
+		source: substringMatcher(clientes)
+	});
+</script>
 @endsection

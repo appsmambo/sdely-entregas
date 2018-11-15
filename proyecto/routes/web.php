@@ -15,3 +15,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/genera-orden', 'OrdenController@getGeneraOrden')->name('genera-orden');
 Route::post('/genera-orden', 'OrdenController@postGeneraOrden');
+
+
+Route::post('/grabar-cliente', 'ClienteController@postGrabarCliente');
+
+

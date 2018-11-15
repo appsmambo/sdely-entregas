@@ -11,6 +11,7 @@
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/typeahead.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="wrapper" class="toggled">
@@ -46,6 +47,8 @@
     <!-- Scripts -->
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery.validation/dist/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery.validation/dist/additional-methods.min.js') }}"></script>
     <script src="{{ asset('vendor/typeahead/typeahead.jquery.min.js') }}"></script>
     @yield('scripts')
     <script>

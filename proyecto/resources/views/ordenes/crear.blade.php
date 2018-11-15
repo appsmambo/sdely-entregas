@@ -112,46 +112,78 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="form-group">
-					<label for="cliente_nombre" class="col-form-label">Nombre:</label>
-					<input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre">
-				</div>
-				<div class="row">
-					<div class="col">
-						<div class="form-group">
-							<label for="cliente_correo" class="col-form-label">Correo:</label>
-							<input type="text" class="form-control" id="cliente_correo" name="cliente_correo">
+				<form id="nuevoCliente" action="" method="post">
+					{{ csrf_field() }}
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_tipo_documento" class="col-form-label">Tipo documento:</label>
+								<select class="form-control" id="cliente_tipo_documento" name="cliente_tipo_documento" required>
+									<option value="dni">DNI</option>
+									<option value="ruc">RUC</option>
+									<option value="ce">CE</option>
+								</select>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_documento" class="col-form-label">Número de documento:</label>
+								<input type="text" class="form-control" id="cliente_documento" name="cliente_documento" value="" required>
+							</div>
 						</div>
 					</div>
-					<div class="col">
-						<div class="form-group">
-							<label for="cliente_telefono" class="col-form-label">Teléfono:</label>
-							<input type="text" class="form-control" id="cliente_telefono" name="cliente_telefono">
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_nombre" class="col-form-label">Nombres:</label>
+								<input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" value="" required>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_apellido" class="col-form-label">Apellidos:</label>
+								<input type="text" class="form-control" id="cliente_apellido" name="cliente_apellido" value="" required>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<div class="form-group">
-							<label for="cliente_direccion" class="col-form-label">Dirección:</label>
-							<input type="text" class="form-control" id="cliente_direccion" name="cliente_direccion">
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_correo" class="col-form-label">Correo:</label>
+								<input type="email" class="form-control" id="cliente_correo" name="cliente_correo" value="" required>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_telefono" class="col-form-label">Teléfono:</label>
+								<input type="text" class="form-control" id="cliente_telefono" name="cliente_telefono" value="" required>
+							</div>
 						</div>
 					</div>
-					<div class="col">
-						<div class="form-group">
-							<label for="cliente_distrito" class="col-form-label">Distrito:</label>
-							<input type="text" class="form-control" id="cliente_distrito" name="cliente_distrito">
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
+								<label for="cliente_direccion" class="col-form-label">Dirección:</label>
+								<input type="text" class="form-control" id="cliente_direccion" name="cliente_direccion" value="" required>
+							</div>
+						</div>
+						<div class="col">
+							<input type="hidden" name="distrito_id">
+							<div class="form-group">
+								<label for="cliente_distrito" class="col-form-label">Distrito:</label>
+								<input type="text" class="form-control" id="cliente_distrito" name="cliente_distrito" value="" required>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label for="cliente_referencia" class="col-form-label">Referencia:</label>
-					<input type="text" class="form-control" id="cliente_referencia" name="cliente_referencia">
-				</div>
+					<div class="form-group">
+						<label for="cliente_referencia" class="col-form-label">Referencia:</label>
+						<input type="text" class="form-control" id="cliente_referencia" name="cliente_referencia" value="" required>
+					</div>
+				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-				<button type="button" class="btn btn-primary">Grabar</button>
+				<button type="button" class="btn btn-primary" id="grabarCliente">Grabar</button>
 			</div>
 		</div>
 	</div>
@@ -174,14 +206,62 @@
 			cb(matches);
 		};
 	};
-	$('.typeahead.cliente').typeahead({
-		hint: false,
-		highlight: true,
-		minLength: 3
-	},
-	{
-		name: 'clientes',
-		source: substringMatcher(clientes)
+	$(function() {
+		$('.typeahead.cliente').typeahead({
+			hint: false,
+			highlight: true,
+			minLength: 3
+		},
+		{
+			name: 'clientes',
+			source: substringMatcher(clientes)
+		});
+		$('#grabarCliente').click(function() {
+			$('#nuevoCliente').submit();
+		});
+		$('#nuevoCliente').validate({
+			submitHandler: function(form) {
+				var thisForm = $(form);
+				var nombreCliente = $('#cliente_nombre').val() + ' ' + $('#cliente_apellido').val();
+				$.ajax({
+					type: 'POST',
+					url: '{{ url('grabar-cliente') }}',
+					data: thisForm.serialize(),
+					dataType: 'text'
+				}).done(function(e) {
+					$('#cliente_id').val(e);
+					$('#cliente').val(nombreCliente);
+					$('#formCliente').modal('hide');
+					// limpiar controles
+
+				});
+				return false;
+			}
+		});
+
+/*
+$("#your_form_id").submit(function(e){ 
+    e.preventDefault(); 
+    var datas = $(this).serialize(); 
+    $.ajax({
+
+        data: datas,
+        // Or this
+        data: 'key1=' + value1 + '&key2=' + value2 + '&key3=' + value3,
+
+        // to match your server response
+        dataType: "text"
+
+        // Error warning
+        .fail(function() {
+           alert( "error" );
+        })
+
+    });
+});
+*/
+
+
 	});
 </script>
 @endsection

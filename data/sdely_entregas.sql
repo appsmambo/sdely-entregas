@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2018 a las 00:13:29
+-- Tiempo de generación: 17-11-2018 a las 00:18:59
 -- Versión del servidor: 10.1.36-MariaDB
 -- Versión de PHP: 7.2.11
 
@@ -248,7 +248,8 @@ INSERT INTO `cliente` (`id`, `created_at`, `updated_at`, `tipo_documento`, `docu
 (197, '2018-11-15 03:55:59', '0000-00-00 00:00:00', 'dni', '1608102152199', 'Espinoza', 'Beverly', 'cubilia@ad.org', '(418) 636-6459', '9873 Metus. Street', '150101', 'turpis. Nulla aliquet.', 1),
 (198, '2018-11-15 03:55:59', '0000-00-00 00:00:00', 'dni', '1652061503499', 'Osborne', 'Jonah', 'arcu@dictumplacerataugue.co.uk', '(936) 726-1413', 'Ap #601-6467 Urna. St.', '150101', 'augue ut lacus. Nulla tincidunt, neque', 1),
 (199, '2018-11-15 03:55:59', '0000-00-00 00:00:00', 'dni', '1669070645599', 'Murphy', 'Clinton', 'nunc.nulla.vulputate@Quisqueornare.org', '(566) 657-6373', '252-1866 Non Ave', '150101', 'taciti sociosqu ad litora torquent per conubia nostra, per inceptos', 1),
-(200, '2018-11-15 03:55:59', '0000-00-00 00:00:00', 'dni', '1664071154599', 'Reynolds', 'Courtney', 'lectus@diam.org', '(983) 377-2927', 'Ap #942-3414 Senectus Rd.', '150101', 'velit.', 1);
+(200, '2018-11-15 03:55:59', '0000-00-00 00:00:00', 'dni', '1664071154599', 'Reynolds', 'Courtney', 'lectus@diam.org', '(983) 377-2927', 'Ap #942-3414 Senectus Rd.', '150101', 'velit.', 1),
+(260, '2018-11-16 20:21:24', '2018-11-16 20:21:24', 'dni', '41363363', 'Quintanilla', 'Juan Carlos', 'quintanilla.peru@gmail.com', '45362879', 'Lima', 'Lima', 'cuadra 7', 1);
 
 -- --------------------------------------------------------
 
@@ -314,11 +315,18 @@ CREATE TABLE `orden` (
   `id_cliente` int(11) NOT NULL,
   `id_tipo_pago` int(11) NOT NULL,
   `fecha_hora_entrega` datetime NOT NULL,
-  `voucher` varchar(200) NOT NULL,
-  `numero_operacion` varchar(50) NOT NULL,
-  `entrega_remito` tinyint(4) NOT NULL,
+  `voucher` varchar(200) DEFAULT NULL,
+  `numero_operacion` varchar(50) DEFAULT NULL,
+  `entrega_remito` tinyint(4) DEFAULT NULL,
   `estado` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `orden`
+--
+
+INSERT INTO `orden` (`id`, `created_at`, `updated_at`, `id_cliente`, `id_tipo_pago`, `fecha_hora_entrega`, `voucher`, `numero_operacion`, `entrega_remito`, `estado`) VALUES
+(1, '2018-11-16 22:28:03', '2018-11-16 22:28:03', 260, 2, '2018-11-24 13:33:00', NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -331,10 +339,19 @@ CREATE TABLE `orden_detalle` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `id_orden` int(11) NOT NULL,
-  `sku` varchar(10) NOT NULL,
+  `sku` varchar(50) NOT NULL,
+  `color` varchar(50) NOT NULL,
   `talla` varchar(5) NOT NULL,
   `cantidad` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `orden_detalle`
+--
+
+INSERT INTO `orden_detalle` (`id`, `created_at`, `updated_at`, `id_orden`, `sku`, `color`, `talla`, `cantidad`) VALUES
+(1, '2018-11-16 22:28:03', '2018-11-16 22:28:03', 1, '3434234', 'blanco', '23', 3),
+(2, '2018-11-16 22:28:03', '2018-11-16 22:28:03', 1, '3434234', 'blanco', '24', 1);
 
 -- --------------------------------------------------------
 
@@ -2303,7 +2320,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=261;
 
 --
 -- AUTO_INCREMENT de la tabla `marca`
@@ -2321,13 +2338,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `orden`
 --
 ALTER TABLE `orden`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `orden_detalle`
 --
 ALTER TABLE `orden_detalle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_pago`

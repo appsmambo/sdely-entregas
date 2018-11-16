@@ -1,6 +1,13 @@
 @extends('layouts.app')
-
 @section('content')
+<h2>
+    Últimas órdenes
+</h2>
+<div class="card">
+    <div class="card-body">
+        Listado
+    </div>
+</div>
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">

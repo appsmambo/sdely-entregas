@@ -5,14 +5,14 @@
 </h2>
 <div class="card">
 	<div class="card-body">
-		<form method="post" action="{{ url('genera-orden') }}">
+		<form method="post" action="{{ url('genera-orden') }}" id="orden">
 			{{ csrf_field() }}
 			<div class="form-row">
 				<div class="col-sm">
 					<label for="cliente" class="d-block">Cliente</label>
 					<div class="input-group">
 						<input type="hidden" name="cliente_id" id="cliente_id">
-						<input type="text" class="form-control typeahead cliente" id="cliente" name="cliente" placeholder="Busque por nombre o número de documento">
+						<input type="text" class="form-control typeahead cliente" id="cliente" name="cliente" placeholder="Busque por nombre o número de documento" required>
 						<div class="input-group-append">
 							<button data-toggle="modal" data-target="#formCliente" class="btn btn-secondary btn-sm" type="button"><i class="fas fa-user-plus"></i></button>
 						</div>
@@ -23,7 +23,7 @@
 						<label for="tipo_pago">Tipo de pago</label>
 						<select class="form-control" name="tipo_pago" id="tipo_pago">
 						@foreach ($tipoPago as $tipo)
-							<option value="">{{ $tipo->descripcion }}</option>
+							<option value="{{ $tipo->id }}">{{ $tipo->descripcion }}</option>
 						@endforeach
 						</select>
 					</div>
@@ -35,13 +35,13 @@
 						<div class="col">
 							<div class="form-group">
 								<label for="fecha">Fecha de entrega:</label>
-								<input type="text" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega">
+								<input type="date" min="16/11/2018" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega" required>
 							</div>
 						</div>
 						<div class="col">
 							<div class="form-group">
 								<label for="hora">Hora de entrega:</label>
-								<input type="text" class="form-control" id="hora" name="hora" placeholder="Ingrese hora de entrega">
+								<input type="time" class="form-control" id="hora" name="hora" placeholder="Ingrese hora de entrega" required>
 							</div>
 						</div>
 					</div>
@@ -55,46 +55,33 @@
 			<h3>Ingresar productos</h3>
 			<div class="form-row">
 				<div class="col">
-					<div class="form-group">
-						<label for="sku">SKU</label>
-						<input type="text" id="sku" name="sku" class="form-control">
+					<div id="colSku" class="form-group">
+						<label>SKU</label>
+						<input type="text" name="sku[]" class="form-control">
 					</div>
 				</div>
 				<div class="col">
-					<div class="form-group">
-						<label for="color">Color</label>
-						<input type="text" id="color" name="color" class="form-control">
+					<div id="colColor" class="form-group">
+						<label>Color</label>
+						<input type="text" name="color[]" class="form-control">
 					</div>
 				</div>
 				<div class="col">
-					<div class="form-group">
-						<label for="talla">Talla</label>
-						<input type="text" id="talla" name="talla" class="form-control">
+					<div id="colTalla" class="form-group">
+						<label>Talla</label>
+						<input type="text" name="talla[]" class="form-control">
 					</div>
 				</div>
-				<div class="col">
-					<label for="cantidad">Cantidad</label>
+				<div id="colCantidad" class="col">
+					<label>Cantidad</label>
 					<div class="input-group">
-						<input type="number" id="cantidad" name="cantidad" class="form-control">
+						<input type="number" name="cantidad[]" class="form-control">
 						<div class="input-group-append">
-							<button class="btn btn-secondary btn-sm" type="button"><i class="fas fa-plus-square"></i></button>
+							<button id="agregarFila" class="btn btn-secondary btn-sm" type="button"><i class="fas fa-plus-square"></i></button>
 						</div>
 					</div>
 				</div>
 			</div>
-			<table class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">SKU</th>
-						<th scope="col">Color</th>
-						<th scope="col">Talla</th>
-						<th scope="col">Cantidad</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
 			<p class="text-right">
 				<a href="{{ url('home') }}" class="btn btn-secondary">Cancelar</a>
 				<button type="submit" class="btn btn-primary">Grabar</button>
@@ -191,8 +178,9 @@
 @endsection
 @section('scripts')
 <script>
+	var fila = 1;
 	var clientes = {!! $clientes !!};
-	var substringMatcher = function(strs) {
+	var buscaClientes = function(strs) {
 		return function findMatches(q, cb) {
 			var matches, substringRegex;
 			matches = [];
@@ -214,54 +202,48 @@
 		},
 		{
 			name: 'clientes',
-			source: substringMatcher(clientes)
+			source: buscaClientes(clientes)
 		});
 		$('#grabarCliente').click(function() {
 			$('#nuevoCliente').submit();
 		});
+		$('#orden').validate();
 		$('#nuevoCliente').validate({
 			submitHandler: function(form) {
 				var thisForm = $(form);
-				var nombreCliente = $('#cliente_nombre').val() + ' ' + $('#cliente_apellido').val();
+				var data = thisForm.serialize();
+				var nombreCliente = $('#cliente_nombre').val();
+				var apellidoCliente = $('#cliente_apellido').val();
+				var documentoCliente = $('#cliente_documento').val();
 				$.ajax({
 					type: 'POST',
 					url: '{{ url('grabar-cliente') }}',
-					data: thisForm.serialize(),
+					data: data,
 					dataType: 'text'
 				}).done(function(e) {
+					var cliente = {id: e,documento: documentoCliente, apellidos: apellidoCliente, nombres: nombreCliente};
+					clientes.push(cliente);
 					$('#cliente_id').val(e);
-					$('#cliente').val(nombreCliente);
-					$('#formCliente').modal('hide');
+					$('#cliente').val(nombreCliente + ' ' + apellidoCliente);
 					// limpiar controles
-
+					$("#cliente_tipo_documento").prop('selectedIndex', 0);
+					$('#cliente_documento, #cliente_nombre, #cliente_apellido, #cliente_correo, #cliente_telefono, #cliente_direccion, #cliente_distrito, #cliente_referencia').val('');
+					$('#formCliente').modal('hide');
 				});
 				return false;
 			}
 		});
-
-/*
-$("#your_form_id").submit(function(e){ 
-    e.preventDefault(); 
-    var datas = $(this).serialize(); 
-    $.ajax({
-
-        data: datas,
-        // Or this
-        data: 'key1=' + value1 + '&key2=' + value2 + '&key3=' + value3,
-
-        // to match your server response
-        dataType: "text"
-
-        // Error warning
-        .fail(function() {
-           alert( "error" );
-        })
-
-    });
-});
-*/
-
-
+		$('#agregarFila').click(function() {
+			$('#colSku').append('<input id="sku' + fila + '" type="text" name="sku[]" class="form-control my-3">');
+			$('#colColor').append('<input id="color' + fila + '" type="text" name="color[]" class="form-control my-3">');
+			$('#colTalla').append('<input id="talla' + fila + '" type="text" name="talla[]" class="form-control my-3">');
+			$('#colCantidad').append('<div id="cantidad' + fila + '" class="input-group my-3"><input type="number" name="cantidad[]" class="form-control"><div class="input-group-append"><button data-fila="' + fila + '" class="borrarFila btn btn-danger btn-sm" type="button"><i class="far fa-trash-alt"></i></button></div></div>');
+			fila++;
+		});
+		$(document).on('click', '.borrarFila', function() {
+			var fila = $(this).data('fila');
+			$('#sku' + fila + ',#color' + fila + ',#talla' + fila + ',#cantidad' + fila).remove();
+		});
 	});
 </script>
 @endsection

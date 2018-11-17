@@ -35,7 +35,7 @@
 						<div class="col">
 							<div class="form-group">
 								<label for="fecha">Fecha de entrega:</label>
-								<input type="date" min="16/11/2018" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega" required>
+								<input type="date" min="" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega" required>
 							</div>
 						</div>
 						<div class="col">
@@ -155,10 +155,10 @@
 							</div>
 						</div>
 						<div class="col">
-							<input type="hidden" name="distrito_id">
+							<input type="hidden" name="cliente_ubigeo" id="cliente_ubigeo">
 							<div class="form-group">
 								<label for="cliente_distrito" class="col-form-label">Distrito:</label>
-								<input type="text" class="form-control" id="cliente_distrito" name="cliente_distrito" value="" required>
+								<input type="text" class="form-control typeahead distrito" id="cliente_distrito" name="cliente_distrito" value="" required>
 							</div>
 						</div>
 					</div>
@@ -180,6 +180,7 @@
 <script>
 	var fila = 1;
 	var clientes = {!! $clientes !!};
+	var distritos = {!! $ubigeo !!};
 	var buscaClientes = function(strs) {
 		return function findMatches(q, cb) {
 			var matches, substringRegex;
@@ -194,15 +195,46 @@
 			cb(matches);
 		};
 	};
+	var buscaDistrito = function(strs) {
+		return function findMatches(q, cb) {
+			var matches, substringRegex;
+			matches = [];
+			substrRegex = new RegExp(q, 'i');
+			$.each(strs, function(i, str) {
+				if (substrRegex.test(str.distrito)) {
+					matches.push(str.provincia + ' - ' + str.distrito);
+					$('#cliente_ubigeo').val(str.id)
+				}
+			});
+			cb(matches);
+		};
+	};
 	$(function() {
+		$('.typeahead').bind('typeahead:select', function(ev, suggestion) {
+			console.log(ev)
+			console.log('Selection: ' + suggestion);
+		});
 		$('.typeahead.cliente').typeahead({
+			hint: false,
+			highlight: true,
+			minLength: 3,
+			select: function(ev, suggestion) {
+				console.log(ev)
+				console.log(suggestion)
+			}
+		},
+		{
+			name: 'clientes',
+			source: buscaClientes(clientes)
+		});
+		$('.typeahead.distrito').typeahead({
 			hint: false,
 			highlight: true,
 			minLength: 3
 		},
 		{
-			name: 'clientes',
-			source: buscaClientes(clientes)
+			name: 'distritos',
+			source: buscaDistrito(distritos)
 		});
 		$('#grabarCliente').click(function() {
 			$('#nuevoCliente').submit();

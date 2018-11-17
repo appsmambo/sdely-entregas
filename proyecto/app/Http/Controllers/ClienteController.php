@@ -21,7 +21,7 @@ class ClienteController extends Controller
         $cliente->correo = $request->input('cliente_correo');
         $cliente->telefono = $request->input('cliente_telefono');
         $cliente->direccion = $request->input('cliente_direccion');
-        $cliente->ubigeo = $request->input('cliente_distrito');
+        $cliente->ubigeo = $request->input('cliente_ubigeo');
         $cliente->referencia = $request->input('cliente_referencia');
         $cliente->save();
         return response($cliente->id, 200)

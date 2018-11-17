@@ -23,15 +23,23 @@
                         <img src="{{ asset('img/logo-blanco.png') }}" class="img-fluid my-3">
                     </a>
                 </li>
+                @if (Auth::check())
+                <li class="text-white">
+                    Hola {{ Auth::user()->name }}
                 <li>
-                    <a href="#">Dashboard</a>
+                    <a href="{{ url('/') }}">Lista de ordenes</a>
                 </li>
+                @if (Auth::user()->name == 'Administrador')
                 <li>
-                    <a href="genera-orden">Generar orden</a>
+                    <a href="{{ url('genera-orden') }}">Generar orden</a>
                 </li>
+                @endif
                 <li>
-                    <a href="#">Cerrar sesión</a>
+                    <a href="{{ route('logout') }}">Cerrar sesión</a>
                 </li>
+                @else
+                <li class="text-white">Ingresar al sistema</li>
+                @endif
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->

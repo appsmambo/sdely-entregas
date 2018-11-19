@@ -14,9 +14,39 @@
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
+    <nav class="navbar navbar-dark bg-dark d-block d-md-none">
+        <a class="navbar-brand" href="{{ url('/') }}">
+            <img src="{{ asset('img/logo-blanco.png') }}" style="height:34px" class="img-fluid" alt="">
+        </a>
+        <button class="navbar-toggler float-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                @if (Auth::check())
+                <li class="nav-item text-white">
+                    Hola {{ Auth::user()->name }}
+                </li>
+                <li class="nav-item">
+                    <a class=" text-white" href="{{ url('/') }}">Lista de ordenes</a>
+                </li>
+                @if (Auth::user()->name == 'Administrador')
+                <li class="nav-item">
+                    <a class=" text-white" href="{{ url('genera-orden') }}">Generar orden</a>
+                </li>
+                @endif
+                <li class="nav-item">
+                    <a class=" text-white" href="{{ route('logout') }}">Cerrar sesión</a>
+                </li>
+                @else
+                <li class="nav-item text-white">Ingresar al sistema</li>
+                @endif
+            </ul>
+        </div>
+    </nav>
     <div id="wrapper" class="toggled">
         <!-- Sidebar -->
-        <div id="sidebar-wrapper">
+        <div id="sidebar-wrapper" class="d-none d-md-block">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="{{ url('/') }}">
@@ -26,6 +56,7 @@
                 @if (Auth::check())
                 <li class="text-white">
                     Hola {{ Auth::user()->name }}
+                </li>
                 <li>
                     <a href="{{ url('/') }}">Lista de ordenes</a>
                 </li>

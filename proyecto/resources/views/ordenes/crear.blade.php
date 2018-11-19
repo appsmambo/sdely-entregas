@@ -8,7 +8,7 @@
 		<form method="post" action="{{ url('genera-orden') }}" id="orden">
 			{{ csrf_field() }}
 			<div class="form-row">
-				<div class="col-sm">
+				<div class="col-lg">
 					<label for="cliente" class="d-block">Cliente</label>
 					<div class="input-group">
 						<input type="hidden" name="cliente_id" id="cliente_id">
@@ -18,7 +18,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm">
+				<div class="col-lg">
 					<div class="form-group">
 						<label for="tipo_pago">Tipo de pago</label>
 						<select class="form-control" name="tipo_pago" id="tipo_pago">
@@ -30,7 +30,7 @@
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-sm">
+				<div class="col-lg">
 					<div class="row">
 						<div class="col">
 							<div class="form-group">
@@ -46,7 +46,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm text-right mt-4">
+				<div class="col-lg text-right mt-4">
 					<a href="{{ url('home') }}" class="btn btn-secondary">Cancelar</a>
 					<button type="submit" class="btn btn-primary">Grabar</button>
 				</div>
@@ -102,7 +102,7 @@
 				<form id="nuevoCliente" action="" method="post">
 					{{ csrf_field() }}
 					<div class="row">
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_tipo_documento" class="col-form-label">Tipo documento:</label>
 								<select class="form-control" id="cliente_tipo_documento" name="cliente_tipo_documento" required>
@@ -112,7 +112,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_documento" class="col-form-label">Número de documento:</label>
 								<input type="text" class="form-control" id="cliente_documento" name="cliente_documento" value="" required>
@@ -120,13 +120,13 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_nombre" class="col-form-label">Nombres:</label>
 								<input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" value="" required>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_apellido" class="col-form-label">Apellidos:</label>
 								<input type="text" class="form-control" id="cliente_apellido" name="cliente_apellido" value="" required>
@@ -134,13 +134,13 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_correo" class="col-form-label">Correo:</label>
 								<input type="email" class="form-control" id="cliente_correo" name="cliente_correo" value="" required>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_telefono" class="col-form-label">Teléfono:</label>
 								<input type="text" class="form-control" id="cliente_telefono" name="cliente_telefono" value="" required>
@@ -148,16 +148,16 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col">
+						<div class="col-lg">
 							<div class="form-group">
 								<label for="cliente_direccion" class="col-form-label">Dirección:</label>
 								<input type="text" class="form-control" id="cliente_direccion" name="cliente_direccion" value="" required>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-lg">
 							<input type="hidden" name="cliente_ubigeo" id="cliente_ubigeo">
 							<div class="form-group">
-								<label for="cliente_distrito" class="col-form-label">Distrito:</label>
+								<label for="cliente_distrito" class="col-form-label d-block">Distrito:</label>
 								<input type="text" class="form-control typeahead distrito" id="cliente_distrito" name="cliente_distrito" value="" required>
 							</div>
 						</div>
@@ -188,8 +188,7 @@
 			substrRegex = new RegExp(q, 'i');
 			$.each(strs, function(i, str) {
 				if (substrRegex.test(str.documento) || substrRegex.test(str.nombres) || substrRegex.test(str.apellidos)) {
-					matches.push(str.documento + ' | ' + str.nombres + ' ' + str.apellidos);
-					$('#cliente_id').val(str.id)
+					matches.push(str.documento + ' - ' + str.nombres + ' ' + str.apellidos);
 				}
 			});
 			cb(matches);
@@ -203,7 +202,6 @@
 			$.each(strs, function(i, str) {
 				if (substrRegex.test(str.distrito)) {
 					matches.push(str.provincia + ' - ' + str.distrito);
-					$('#cliente_ubigeo').val(str.id)
 				}
 			});
 			cb(matches);
@@ -211,17 +209,26 @@
 	};
 	$(function() {
 		$('.typeahead').bind('typeahead:select', function(ev, suggestion) {
-			console.log(ev)
-			console.log('Selection: ' + suggestion);
+			var esCliente = $(this).hasClass('cliente');
+			var buscar = suggestion.split(' - ');
+			if (esCliente) {
+				$.each(clientes, function(i, str) {
+					if (str.documento == buscar[0]) {
+						$('#cliente_id').val(str.id);
+					}
+				});
+			} else {
+				$.each(distritos, function(i, str) {
+					if (str.provincia == buscar[0] && str.distrito == buscar[1]) {
+						$('#cliente_ubigeo').val(str.id);
+					}
+				});
+			}
 		});
 		$('.typeahead.cliente').typeahead({
 			hint: false,
 			highlight: true,
-			minLength: 3,
-			select: function(ev, suggestion) {
-				console.log(ev)
-				console.log(suggestion)
-			}
+			minLength: 3
 		},
 		{
 			name: 'clientes',

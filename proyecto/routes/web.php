@@ -22,9 +22,9 @@ Route::post('/cancelar-orden', 'OrdenController@postCancelarOrden');
 
 Route::post('/grabar-cliente', 'ClienteController@postGrabarCliente');
 
-Route::get('storage/{filename}', function ($filename)
+Route::get('storage/{folder}/{filename}', function ($folder, $filename)
 {
-	$path = storage_path('app/images/' . $filename);
+	$path = storage_path('app/'.$folder.'/' . $filename);
 
 	if (!File::exists($path)) {
 		abort(404);

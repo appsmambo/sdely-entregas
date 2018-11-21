@@ -9,7 +9,7 @@
 			{{ csrf_field() }}
 			<div class="form-row">
 				<div class="col-lg">
-					<label for="cliente" class="d-block">Cliente</label>
+					<label for="cliente" class="d-block">Cliente:</label>
 					<div class="input-group">
 						<input type="hidden" name="cliente_id" id="cliente_id">
 						<input type="text" class="form-control typeahead cliente" id="cliente" name="cliente" placeholder="Busque por nombre o número de documento" required>
@@ -19,13 +19,23 @@
 					</div>
 				</div>
 				<div class="col-lg">
-					<div class="form-group">
-						<label for="tipo_pago">Tipo de pago</label>
-						<select class="form-control" name="tipo_pago" id="tipo_pago">
-						@foreach ($tipoPago as $tipo)
-							<option value="{{ $tipo->id }}">{{ $tipo->descripcion }}</option>
-						@endforeach
-						</select>
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
+								<label for="tipo_pago">Tipo de pago:</label>
+								<select class="form-control" name="tipo_pago" id="tipo_pago">
+								@foreach ($tipoPago as $tipo)
+									<option value="{{ $tipo->id }}">{{ $tipo->descripcion }}</option>
+								@endforeach
+								</select>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label for="valor_envio">Valor de envío:</label>
+								<input type="text" class="form-control" id="valor_envio" name="valor_envio" placeholder="Ingrese el valor de envío">
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -35,7 +45,7 @@
 						<div class="col">
 							<div class="form-group">
 								<label for="fecha">Fecha de entrega:</label>
-								<input type="date" min="" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega" required>
+								<input type="date" class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de entrega" required>
 							</div>
 						</div>
 						<div class="col">

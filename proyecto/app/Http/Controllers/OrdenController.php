@@ -84,8 +84,12 @@ class OrdenController extends Controller
         $orden->numero_operacion = $request->input('orden_operacion');
         $orden->observaciones = $request->input('orden_observacion');
         if ($request->hasFile('orden_voucher')) {
-            $orden_voucher = str_replace('images/', '', $request->orden_voucher->store('images'));
+            $orden_voucher = str_replace('voucher/', '', $request->orden_voucher->store('voucher'));
             $orden->voucher = $orden_voucher;
+        }
+        if ($request->hasFile('orden_remito')) {
+            $orden_remito = str_replace('remito/', '', $request->orden_remito->store('remito'));
+            $orden->entrega_remito = $orden_remito;
         }
         $orden->save();
         return redirect('home');

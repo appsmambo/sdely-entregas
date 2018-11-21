@@ -9,13 +9,13 @@
 		<div class="form-row">
 			<div class="col-lg">
 				<div class="form-group">
-					<label>Nombre</label>
+					<label>Nombre:</label>
 					<input readonly class="form-control" value="{{ $cliente->nombres . ' ' . $cliente->apellidos }}">
 				</div>
 			</div>
 			<div class="col-lg">
 				<div class="form-group">
-					<label>Documento</label>
+					<label>Documento:</label>
 					<input readonly class="form-control" value="{{ strtoupper($cliente->tipo_documento) . ' - ' . $cliente->documento }}">
 				</div>
 			</div>
@@ -23,22 +23,32 @@
 		<div class="form-row">
 			<div class="col-lg">
 				<div class="form-group">
-					<label>Correo</label>
+					<label>Correo:</label>
 					<input readonly class="form-control" value="{{ $cliente->correo }}">
 				</div>
 			</div>
 			<div class="col-lg">
 				<div class="form-group">
-					<label>Teléfono</label>
+					<label>Teléfono:</label>
 					<input readonly class="form-control" value="{{ $cliente->telefono }}">
 				</div>
 			</div>
 		</div>
 		<div class="form-row">
 			<div class="col-lg">
-				<div class="form-group">
-					<label>Tipo de pago</label>
-					<input readonly class="form-control" value="{{ $tipoPago }}">
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label>Tipo de pago:</label>
+							<input readonly class="form-control" value="{{ $tipoPago }}">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label>Valor de envío:</label>
+							<input readonly class="form-control" value="{{ $orden->valor_envio }}">
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col-lg">
@@ -61,7 +71,7 @@
 		<p class="text-right mt-3">
 			<a href="{{ url('home') }}" class="btn btn-secondary">Regresar</a>
 			@if (!isset($orden->voucher))
-			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Cancelar la orden</a>
+			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Confirmar orden</a>
 			@endif
 		</p>
 		<hr>
@@ -81,7 +91,7 @@
 		<p class="text-right mt-3">
 			<a href="{{ url('home') }}" class="btn btn-secondary">Regresar</a>
 			@if (!isset($orden->voucher))
-			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Cancelar la orden</a>
+			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Confirmar orden</a>
 			@endif
 		</p>
 		<hr>
@@ -113,7 +123,7 @@
 		<p class="text-right mt-3">
 			<a href="{{ url('home') }}" class="btn btn-secondary">Regresar</a>
 			@if (!isset($orden->voucher))
-			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Cancelar la orden</a>
+			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Confirmar orden</a>
 			@endif
 		</p>
 		@if (isset($orden->voucher))
@@ -131,13 +141,13 @@
 				</div>
 			</div>
 			<div class="col-lg">
-				<img src="{{ url('storage/' . $orden->voucher) }}" class="img-fluid">
+				<a href="{{ url('storage/voucher/' . $orden->voucher) }}" target="_blank"><i class="far fa-image fa-2x"> Voucher</i></a>
 			</div>
 		</div>
 		<p class="text-right mt-3">
 			<a href="{{ url('home') }}" class="btn btn-secondary">Regresar</a>
 			@if (!isset($orden->voucher))
-			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Cancelar la orden</a>
+			<a href="#" class="btn btn-success" data-toggle="modal" data-target="#formCancelarOrden">Confirmar orden</a>
 			@endif
 		</p>
 		@endif
@@ -147,7 +157,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Cancelar Orden</h5>
+                <h5 class="modal-title">Confirmar Orden</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -162,8 +172,41 @@
                     </div>
                     <div class="form-group">
                         <label for="orden_voucher" class="col-form-label">Adjuntar voucher:</label>
-                        <input type="file" class="form-control" id="orden_voucher" name="orden_voucher" accept="image/*" required>
+                        <input type="file" class="form-control" id="orden_voucher" name="orden_voucher" accept="application/pdf,image/*" required>
                     </div>
+                    <div class="form-group">
+                        <label for="orden_remito" class="col-form-label">Adjuntar remito de despacho:</label>
+                        <input type="file" class="form-control" id="orden_remito" name="orden_remito" accept="application/pdf,image/*" required>
+                    </div>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th scope="col">SKU</th>
+									<th scope="col">Cantidad</th>
+									<th>Entregado</th>
+								</tr>
+							</thead>
+							<tbody>
+							@forelse ($ordenDetalle as $detalle)
+								<tr>
+									<td>{{ $detalle->sku }}<br>{{ $detalle->color }}</td>
+									<td>{{ $detalle->cantidad }}</td>
+									<td>
+										<select name="detalle{{ $detalle->id}}" class="form-control">
+											<option value="1">Sí</option>
+											<option value="0">No</option>
+										</select>
+									</td>
+								</tr>
+							@empty
+								<tr><td colspan="3">No se encontraron registros para esta orden.</td></tr>
+							@endforelse
+							</tbody>
+						</table>
+					</div>
+
+
                     <div class="form-group">
                         <label for="orden_observacion" class="col-form-label">Ingresar observaciones:</label>
                         <textarea class="form-control" id="orden_observacion" name="orden_observacion" rows="3"></textarea>
@@ -171,7 +214,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Confirmar</button>
                 <button type="button" class="btn btn-success" id="actualizarOrden">Actualizar la orden</button>
             </div>
         </div>
